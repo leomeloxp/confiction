@@ -1,6 +1,4 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+import { Confiction } from './Confiction';
+import { isSchemaEntry, Schema, SchemaEntry } from './utils';
+
+export { Confiction, isSchemaEntry, SchemaEntry, Schema };

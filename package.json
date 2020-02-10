@@ -1,7 +1,7 @@
 {
   "name": "confiction",
   "author": "Leonardo Melo",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "license": "MIT",
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
@@ -12,6 +12,8 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
+    "docs:markdown": "typedoc",
+    "docs:html": "typedoc --plugin none --out public",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
@@ -19,9 +21,18 @@
   "peerDependencies": {},
   "devDependencies": {
     "@types/jest": "^24.9.1",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
     "husky": "^4.2.1",
+    "prettier": "^1.19.1",
     "tsdx": "^0.12.3",
     "tslib": "^1.10.0",
+    "typedoc": "^0.16.9",
+    "typedoc-plugin-markdown": "^2.2.16",
     "typescript": "^3.7.5"
   },
   "husky": {
