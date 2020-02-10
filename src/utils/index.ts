@@ -1,27 +1,29 @@
-export const isConfigValue = (entry: ConfigValue | Schema | undefined): entry is ConfigValue =>
-  ['string', 'number', 'boolean'].includes(typeof entry);
-
 const schemaEntryKeys = ['doc', 'default', 'sensitive', 'type'];
 
-export const isSchemaEntry = (obj: SchemaEntry | {}): obj is SchemaEntry => {
-  return (
-    Object.keys(obj).every(key => schemaEntryKeys.includes(key)) &&
-    'doc' in obj &&
-    typeof obj.doc === 'string' &&
-    'default' in obj &&
-    ['string', 'number', 'boolean'].includes(typeof obj.default)
-  );
+export const isSchemaEntry = (obj: SchemaEntry | {} = {}): obj is SchemaEntry =>
+  Object.keys(obj).every(key => schemaEntryKeys.includes(key)) &&
+  'doc' in obj &&
+  typeof obj.doc === 'string' &&
+  'default' in obj &&
+  typeof obj.default !== 'undefined';
+
+export const parseEntries = (schema: { [k: string]: SchemaEntry }): [string, SchemaEntry][] => {
+  return Object.entries(schema).map(([key, value]) => {
+    if (isSchemaEntry(value)) {
+      return [key, value.default];
+    }
+    throw new Error('Schema not in valid format. Configs must be top level only');
+  });
 };
 
-export type ConfigValue = string | number | boolean;
-
-export interface SchemaEntry {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface SchemaEntry<T = any> {
   doc: string;
-  default: ConfigValue;
+  default: T;
   sensitive?: boolean;
   type?: string;
 }
 
-export interface Schema {
-  [key: string]: SchemaEntry;
-}
+export type Schema<T> = {
+  [K in keyof T]: SchemaEntry<T[K]>;
+};
