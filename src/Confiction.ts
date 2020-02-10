@@ -1,4 +1,8 @@
-import { ConfigValue, isConfigValue, isSchemaEntry, Schema } from './utils';
+import { parseEntries, Schema } from './utils';
+
+type ConfigValue = unknown;
+
+type UnknownSchema = { [k: string]: ConfigValue };
 
 /**
  * Confiction, browser based configuration manager.
@@ -20,14 +24,14 @@ export class Confiction {
    * @type {Schema}
    * @memberof Confiction
    */
-  private schema: Schema = {};
+  private schema: Schema<UnknownSchema> = {};
 
   /**
    *Creates an instance of Confiction.
    * @param {Schema} schema A Schema object used to describe the configuration options.
    * @memberof Confiction
    */
-  constructor(schema: Schema) {
+  constructor(schema: Schema<UnknownSchema>) {
     this.schema = schema;
     this.default();
   }
@@ -38,22 +42,22 @@ export class Confiction {
    */
   default(): void {
     this.config = new Map();
-    Object.entries(this.schema).forEach(([key, value]) => {
-      if (isSchemaEntry(value)) {
-        this.config.set(key, value.default);
-      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    parseEntries(this.schema).forEach(([key, value]) => {
+      this.config.set(key, value);
     });
   }
 
   /**
    * Returns the value for the config stored as the supplied key.
-   * @param {string} key The key of the desired config value.
-   * @returns {(ConfigValue | undefined)}
+   * @param {K} key The key of the desired config value.
+   * @returns {(T[K])} The value stored in config for the supplied key.
    * @memberof Confiction
    */
-  get(key: string): ConfigValue | undefined {
-    const value = this.config.get(key);
-    return isConfigValue(value) ? value : undefined;
+  get<T, K extends keyof T | any = string>(key: K): K extends keyof T ? T[K] : T {
+    // @todo: figure out a better type for this map.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (this.config as Map<any, any>).get(key) as K extends keyof T ? T[K] : T;
   }
 
   /**
@@ -79,8 +83,8 @@ export class Confiction {
    * @returns {Schema}
    * @memberof Confiction
    */
-  getSchema(): Schema {
-    return this.schema;
+  getSchema<T = UnknownSchema>(): Schema<T> {
+    return this.schema as Schema<T>;
   }
 
   /**
