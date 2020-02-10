@@ -12,6 +12,8 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
+    "docs:markdown": "typedoc",
+    "docs:html": "typedoc --plugin none --out public",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
