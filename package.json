@@ -16,6 +16,15 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "config",
+    "configuration-management",
+    "configuration",
+    "javascript-library",
+    "javascript",
+    "typescript-library",
+    "typescript"
+  ],
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
