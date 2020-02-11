@@ -1,13 +1,29 @@
 {
   "name": "confiction",
   "author": "Leonardo Melo",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leomeloxp/confiction"
+  },
+  "bugs": {
+    "url": "https://github.com/leomeloxp/confiction/issues"
+  },
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "config",
+    "configuration-management",
+    "configuration",
+    "javascript-library",
+    "javascript",
+    "typescript-library",
+    "typescript"
   ],
   "scripts": {
     "start": "tsdx watch",
@@ -39,11 +55,5 @@
     "hooks": {
       "pre-commit": "tsdx lint"
     }
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all"
   }
 }
