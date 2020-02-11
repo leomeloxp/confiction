@@ -6,6 +6,13 @@
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leomeloxp/confiction"
+  },
+  "bugs": {
+    "url": "https://github.com/leomeloxp/confiction/issues"
+  },
   "files": [
     "dist"
   ],
@@ -39,11 +46,5 @@
     "hooks": {
       "pre-commit": "tsdx lint"
     }
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all"
   }
 }
