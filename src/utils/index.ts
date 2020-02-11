@@ -1,11 +1,16 @@
-const schemaEntryKeys = ['doc', 'default', 'sensitive', 'type'];
+const schemaEntryKeys = ['doc', 'default'];
 
-export const isSchemaEntry = (obj: SchemaEntry | {} = {}): obj is SchemaEntry =>
-  Object.keys(obj).every(key => schemaEntryKeys.includes(key)) &&
-  'doc' in obj &&
-  typeof obj.doc === 'string' &&
-  'default' in obj &&
-  typeof obj.default !== 'undefined';
+export const isSchemaEntry = (obj: SchemaEntry | {} = {}): obj is SchemaEntry => {
+  const keys = Object.keys(obj);
+  const hasRequiredKeys = schemaEntryKeys.every((key) => keys.includes(key));
+  return (
+    hasRequiredKeys &&
+    'doc' in obj &&
+    typeof obj.doc === 'string' &&
+    'default' in obj &&
+    typeof obj.default !== 'undefined'
+  );
+};
 
 export const parseEntries = (schema: { [k: string]: SchemaEntry }): [string, SchemaEntry][] => {
   return Object.entries(schema).map(([key, value]) => {
