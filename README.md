@@ -1,5 +1,8 @@
 # Confiction
 
+![build](https://github.com/leomeloxp/confiction/workflows/build/badge.svg?branch=master)
+[![npm version](http://img.shields.io/npm/v/confiction.svg)](https://www.npmjs.org/package/confiction)
+
 Manage your browser based environment configuration with conviction.
 
 Confiction is inspired by [Convict](https://github.com/mozilla/node-convict/) and [Conf](https://github.com/sindresorhus/conf).
@@ -45,7 +48,7 @@ You can optionally override default config (eg, on page load) like so:
 // index.ts
 import { config } from './config';
 
-fetch('/config.json').then(async res => {
+fetch('/config.json').then(async (res) => {
   // Some config values that override default ones.
   const newConfig = await res.json();
   config.load(newConfig);
