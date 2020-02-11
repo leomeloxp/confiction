@@ -1,7 +1,7 @@
 {
   "name": "confiction",
   "author": "Leonardo Melo",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
