@@ -1,4 +1,4 @@
-import { parseEntries, Schema } from './utils';
+import { ConfigValidateOptions, parseEntries, Schema } from './utils';
 
 type ConfigValue = unknown;
 
@@ -66,7 +66,12 @@ export class Confiction {
    * @memberof Confiction
    */
   getProperties(): { [key: string]: ConfigValue } {
-    return Object.fromEntries(this.config.entries());
+    const properties: { [key: string]: ConfigValue } = {};
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of this.config.entries()) {
+      properties[key] = value;
+    }
+    return properties;
   }
 
   /**
@@ -75,7 +80,7 @@ export class Confiction {
    * @memberof Confiction
    */
   getSchemaString(): string {
-    return JSON.stringify(this.getProperties());
+    return JSON.stringify(this.schema);
   }
 
   /**
@@ -133,32 +138,31 @@ export class Confiction {
    * @memberof Confiction
    */
   toString(): string {
-    return JSON.stringify(
-      Object.fromEntries(
-        Array.from(this.config.entries()).map(([key, value]) => {
-          const parsedValue = this.schema.key.sensitive ? '******' : value;
-          return [key, parsedValue];
-        }),
-      ),
-    );
+    const properties: { [key: string]: ConfigValue } = {};
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of this.config.entries()) {
+      properties[key] = this.schema[key].sensitive ? '******' : value;
+    }
+
+    return JSON.stringify(properties);
   }
 
   /**
    * Validates the current config values against the schema definition.
-   * @param {({ allow: 'warn' | 'strict' })} [{ allow }={ allow: 'warn' }]
+   * @param {(ConfigValidateOptions)} [{ allow }={ allow: 'warn' }]
    * @returns {(boolean | never)}
    * @memberof Confiction
    */
-  validate({ allow }: { allow: 'warn' | 'strict' } = { allow: 'warn' }): boolean | never {
+  validate({ allow }: ConfigValidateOptions = { allow: 'warn' }): boolean | never {
     return !Array.from(this.config.entries()).some(([key, value]) => {
-      const { type } = this.schema[key];
+      const { format } = this.schema[key];
       // eslint-disable-next-line valid-typeof
-      if (typeof type === 'string' && typeof value !== type) {
+      if (typeof format === 'string' && typeof value !== format) {
         if (allow === 'warn' && global.console) {
           // eslint-disable-next-line no-console
-          console.warn(`Config '${key}' does not match type '${type}'`);
+          console.warn(`Config '${key}' does not match type '${format}'`);
         } else if (allow === 'strict') {
-          throw new Error(`Config '${key}' does not match type '${type}'`);
+          throw new Error(`Config '${key}' does not match type '${format}'`);
         }
         return true;
       }
