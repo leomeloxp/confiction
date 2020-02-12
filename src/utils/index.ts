@@ -26,9 +26,13 @@ export interface SchemaEntry<T = any> {
   doc: string;
   default: T;
   sensitive?: boolean;
-  type?: string;
+  format?: string;
 }
 
 export type Schema<T> = {
   [K in keyof T]: SchemaEntry<T[K]>;
 };
+
+export interface ConfigValidateOptions {
+  allow: 'warn' | 'strict';
+}
