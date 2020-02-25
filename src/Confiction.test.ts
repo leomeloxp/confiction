@@ -1,3 +1,4 @@
+import Cookies, { Cookie } from 'universal-cookie';
 import { Confiction } from './Confiction';
 
 const schema = {
@@ -10,6 +11,12 @@ const schema = {
     doc: 'A number config value',
     format: 'number',
     default: 42,
+  },
+  sensitiveConfig: {
+    doc: 'A secret value',
+    format: 'string',
+    sensitive: true,
+    default: 'secret',
   },
 };
 
@@ -35,6 +42,19 @@ type Config = {
   [k in keyof typeof schema]: typeof schema[k]['default'];
 };
 
+jest.mock('universal-cookie', () =>
+  jest.fn().mockImplementation(() => {
+    const cookieJar: { [key: string]: Cookie } = {};
+    const mock = {
+      get: (key: string): unknown => cookieJar[key],
+      set: (key: string, value: unknown): void => {
+        cookieJar[key] = value;
+      },
+    };
+    return mock;
+  }),
+);
+
 describe('Confiction', () => {
   test('should create a config store', () => {
     const config = new Confiction<Config>(schema);
@@ -51,6 +71,17 @@ describe('Confiction', () => {
     const config = new Confiction<Config>(schema);
     expect(config.validate()).toBe(true);
     expect(config.validate({ allow: 'strict' })).toBe(true);
+  });
+
+  test('should allow value to be get/set from cookies', () => {
+    // Reset mock stats so tests are clean
+    (Cookies as jest.Mock).mockClear();
+    const config = new Confiction<Config>(schema, { useCookies: true, configHierarchy: ['cookies', 'local'] });
+    config.setToCookie('numberConfig', 23);
+    expect(Cookies).toBeCalledTimes(1);
+    const value = config.get('numberConfig');
+    expect(value).toEqual(23);
+    expect(config.get('stringConfig')).toEqual(schema.stringConfig.default);
   });
 
   test('should fail validation with an invalid schema', () => {
@@ -118,7 +149,7 @@ describe('Confiction', () => {
     const expectedProperties: { [k: string]: unknown } = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(schema)) {
-      expectedProperties[key] = value.default;
+      expectedProperties[key] = (value as typeof schema['sensitiveConfig']).sensitive ? '******' : value.default;
     }
     expect(config.toString()).toBe(JSON.stringify(expectedProperties));
   });
