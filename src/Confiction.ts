@@ -143,7 +143,7 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
    * @param {{ [key: string]: ConfigValue }} config
    * @memberof Confiction
    */
-  load(config: ConfigSchema): void {
+  load(config: Partial<ConfigSchema>): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Object.entries<any>(config).forEach(([key, value]: [keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]]) => {
       this.config.set(key, value);
