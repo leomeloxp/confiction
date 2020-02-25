@@ -1,12 +1,16 @@
 [confiction](../README.md) › [Globals](../globals.md) › ["Confiction"](../modules/_confiction_.md) › [Confiction](_confiction_.confiction.md)
 
-# Class: Confiction
+# Class: Confiction <**ConfigSchema**>
 
 Confiction, browser based configuration manager.
 
 **`export`** 
 
 **`class`** Confiction
+
+## Type parameters
+
+▪ **ConfigSchema**: *[BaseConfigSchema](../modules/_utils_index_.md#baseconfigschema)*
 
 ## Hierarchy
 
@@ -21,12 +25,15 @@ Confiction, browser based configuration manager.
 ### Properties
 
 * [config](_confiction_.confiction.md#private-config)
+* [cookieParser](_confiction_.confiction.md#private-cookieparser)
+* [options](_confiction_.confiction.md#private-options)
 * [schema](_confiction_.confiction.md#private-schema)
 
 ### Methods
 
 * [default](_confiction_.confiction.md#default)
 * [get](_confiction_.confiction.md#get)
+* [getFromCookies](_confiction_.confiction.md#private-getfromcookies)
 * [getProperties](_confiction_.confiction.md#getproperties)
 * [getSchema](_confiction_.confiction.md#getschema)
 * [getSchemaString](_confiction_.confiction.md#getschemastring)
@@ -34,6 +41,7 @@ Confiction, browser based configuration manager.
 * [load](_confiction_.confiction.md#load)
 * [reset](_confiction_.confiction.md#reset)
 * [set](_confiction_.confiction.md#set)
+* [setToCookie](_confiction_.confiction.md#settocookie)
 * [toString](_confiction_.confiction.md#tostring)
 * [validate](_confiction_.confiction.md#validate)
 
@@ -41,9 +49,9 @@ Confiction, browser based configuration manager.
 
 ###  constructor
 
-\+ **new Confiction**(`schema`: [Schema](../modules/_utils_index_.md#schema)‹[UnknownSchema](../modules/_confiction_.md#unknownschema)›): *[Confiction](_confiction_.confiction.md)*
+\+ **new Confiction**(`schema`: [Schema](../modules/_utils_index_.md#schema)‹ConfigSchema›, `options`: Partial‹[ConfictionOptions](../interfaces/_utils_index_.confictionoptions.md)›): *[Confiction](_confiction_.confiction.md)*
 
-*Defined in [Confiction.ts:27](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L27)*
+*Defined in [Confiction.ts:53](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L53)*
 
 Creates an instance of Confiction.
 
@@ -51,9 +59,10 @@ Creates an instance of Confiction.
 
 **Parameters:**
 
-Name | Type | Description |
------- | ------ | ------ |
-`schema` | [Schema](../modules/_utils_index_.md#schema)‹[UnknownSchema](../modules/_confiction_.md#unknownschema)› | A Schema object used to describe the configuration options. |
+Name | Type | Default | Description |
+------ | ------ | ------ | ------ |
+`schema` | [Schema](../modules/_utils_index_.md#schema)‹ConfigSchema› | - | A Schema object used to describe the configuration options. |
+`options` | Partial‹[ConfictionOptions](../interfaces/_utils_index_.confictionoptions.md)› | {} | - |
 
 **Returns:** *[Confiction](_confiction_.confiction.md)*
 
@@ -61,13 +70,41 @@ Name | Type | Description |
 
 ### `Private` config
 
-• **config**: *Map‹string, [ConfigValue](../modules/_confiction_.md#configvalue)›* = new Map()
+• **config**: *Map‹keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]›* = new Map()
 
-*Defined in [Confiction.ts:19](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L19)*
+*Defined in [Confiction.ts:29](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L29)*
 
 Map holding the parsed config values.
 
-**`type`** {Map<string, ConfigValue>}
+**`type`** {Map<keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]>}
+
+**`memberof`** Confiction
+
+___
+
+### `Private` cookieParser
+
+• **cookieParser**: *Cookie* = new Cookie()
+
+*Defined in [Confiction.ts:53](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L53)*
+
+Helper tool used to get/set values from browser cookies.
+
+**`type`** {Cookie}
+
+**`memberof`** Confiction
+
+___
+
+### `Private` options
+
+• **options**: *[ConfictionOptions](../interfaces/_utils_index_.confictionoptions.md)*
+
+*Defined in [Confiction.ts:37](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L37)*
+
+Options used to control behaviour of the config store.
+
+**`type`** {ConfictionOptions}
 
 **`memberof`** Confiction
 
@@ -75,13 +112,13 @@ ___
 
 ### `Private` schema
 
-• **schema**: *[Schema](../modules/_utils_index_.md#schema)‹[UnknownSchema](../modules/_confiction_.md#unknownschema)›*
+• **schema**: *[Schema](../modules/_utils_index_.md#schema)‹ConfigSchema›*
 
-*Defined in [Confiction.ts:27](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L27)*
+*Defined in [Confiction.ts:45](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L45)*
 
 Schema definition for the configuration map.
 
-**`type`** {Schema}
+**`type`** {Schema<ConfigSchema>}
 
 **`memberof`** Confiction
 
@@ -91,7 +128,7 @@ Schema definition for the configuration map.
 
 ▸ **default**(): *void*
 
-*Defined in [Confiction.ts:43](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L43)*
+*Defined in [Confiction.ts:70](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L70)*
 
 Reset the config values to those provided as the `default` key in the schema object.
 
@@ -103,63 +140,65 @@ ___
 
 ###  get
 
-▸ **get**<**T**, **K**>(`key`: K): *K extends keyof T ? T[K] : T*
+▸ **get**(`key`: keyof ConfigSchema): *ConfigSchema[keyof ConfigSchema]*
 
-*Defined in [Confiction.ts:57](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L57)*
-
-Returns the value for the config stored as the supplied key.
+*Defined in [Confiction.ts:85](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L85)*
 
 **`memberof`** Confiction
-
-**Type parameters:**
-
-▪ **T**
-
-▪ **K**: *keyof T | any*
 
 **Parameters:**
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`key` | K | The key of the desired config value. |
+`key` | keyof ConfigSchema | The key of the desired config value. |
 
-**Returns:** *K extends keyof T ? T[K] : T*
+**Returns:** *ConfigSchema[keyof ConfigSchema]*
 
 The value stored in config for the supplied key.
 
 ___
 
+### `Private` getFromCookies
+
+▸ **getFromCookies**(`key`: keyof ConfigSchema): *ConfigSchema[keyof ConfigSchema] | undefined*
+
+*Defined in [Confiction.ts:220](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L220)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`key` | keyof ConfigSchema |
+
+**Returns:** *ConfigSchema[keyof ConfigSchema] | undefined*
+
+___
+
 ###  getProperties
 
-▸ **getProperties**(): *object*
+▸ **getProperties**(): *ConfigSchema*
 
-*Defined in [Confiction.ts:68](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L68)*
+*Defined in [Confiction.ts:104](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L104)*
 
 Returns all config entries as a {key: value} formatted object.
 
 **`memberof`** Confiction
 
-**Returns:** *object*
-
-* \[ **key**: *string*\]: [ConfigValue](../modules/_confiction_.md#configvalue)
+**Returns:** *ConfigSchema*
 
 ___
 
 ###  getSchema
 
-▸ **getSchema**<**T**>(): *[Schema](../modules/_utils_index_.md#schema)‹T›*
+▸ **getSchema**(): *[Schema](../modules/_utils_index_.md#schema)‹ConfigSchema›*
 
-*Defined in [Confiction.ts:86](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L86)*
+*Defined in [Confiction.ts:127](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L127)*
 
 Returns the schema as a standard object.
 
 **`memberof`** Confiction
 
-**Type parameters:**
-
-▪ **T**
-
-**Returns:** *[Schema](../modules/_utils_index_.md#schema)‹T›*
+**Returns:** *[Schema](../modules/_utils_index_.md#schema)‹ConfigSchema›*
 
 ___
 
@@ -167,7 +206,7 @@ ___
 
 ▸ **getSchemaString**(): *string*
 
-*Defined in [Confiction.ts:77](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L77)*
+*Defined in [Confiction.ts:118](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L118)*
 
 Returns the schema as a JSON string.
 
@@ -179,9 +218,9 @@ ___
 
 ###  has
 
-▸ **has**(`key`: string): *boolean*
+▸ **has**(`key`: keyof ConfigSchema | string): *boolean*
 
-*Defined in [Confiction.ts:96](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L96)*
+*Defined in [Confiction.ts:137](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L137)*
 
 Checks whether a config value is set in the config map.
 
@@ -191,7 +230,7 @@ Checks whether a config value is set in the config map.
 
 Name | Type |
 ------ | ------ |
-`key` | string |
+`key` | keyof ConfigSchema &#124; string |
 
 **Returns:** *boolean*
 
@@ -199,9 +238,9 @@ ___
 
 ###  load
 
-▸ **load**(`config`: object): *void*
+▸ **load**(`config`: Partial‹ConfigSchema›): *void*
 
-*Defined in [Confiction.ts:105](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L105)*
+*Defined in [Confiction.ts:146](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L146)*
 
 Loads an object into the config map, overriding any provided property.
 
@@ -211,7 +250,7 @@ Loads an object into the config map, overriding any provided property.
 
 Name | Type |
 ------ | ------ |
-`config` | object |
+`config` | Partial‹ConfigSchema› |
 
 **Returns:** *void*
 
@@ -219,9 +258,9 @@ ___
 
 ###  reset
 
-▸ **reset**(`key`: string): *void*
+▸ **reset**(`key`: keyof ConfigSchema): *void*
 
-*Defined in [Confiction.ts:116](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L116)*
+*Defined in [Confiction.ts:158](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L158)*
 
 Resets a given config property to its default value.
 
@@ -231,7 +270,7 @@ Resets a given config property to its default value.
 
 Name | Type |
 ------ | ------ |
-`key` | string |
+`key` | keyof ConfigSchema |
 
 **Returns:** *void*
 
@@ -239,9 +278,9 @@ ___
 
 ###  set
 
-▸ **set**(`key`: string, `value`: [ConfigValue](../modules/_confiction_.md#configvalue)): *void*
+▸ **set**(`key`: keyof ConfigSchema, `value`: ConfigSchema[keyof ConfigSchema]): *void*
 
-*Defined in [Confiction.ts:126](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L126)*
+*Defined in [Confiction.ts:168](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L168)*
 
 Sets a value to a config key.
 
@@ -251,8 +290,30 @@ Sets a value to a config key.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`key` | string | Key to store the config under. |
-`value` | [ConfigValue](../modules/_confiction_.md#configvalue) | Value for the config property. |
+`key` | keyof ConfigSchema | Key to store the config under. |
+`value` | ConfigSchema[keyof ConfigSchema] | Value for the config property. |
+
+**Returns:** *void*
+
+___
+
+###  setToCookie
+
+▸ **setToCookie**(`key`: keyof ConfigSchema, `value`: ConfigSchema[keyof ConfigSchema], `options?`: CookieSetOptions): *void*
+
+*Defined in [Confiction.ts:178](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L178)*
+
+Sets a config value to the user's cookies.
+
+**`memberof`** Confiction
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`key` | keyof ConfigSchema |
+`value` | ConfigSchema[keyof ConfigSchema] |
+`options?` | CookieSetOptions |
 
 **Returns:** *void*
 
@@ -262,7 +323,7 @@ ___
 
 ▸ **toString**(): *string*
 
-*Defined in [Confiction.ts:135](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L135)*
+*Defined in [Confiction.ts:187](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L187)*
 
 Returns a string representation of this object.
 
@@ -276,7 +337,7 @@ ___
 
 ▸ **validate**(`__namedParameters`: object): *boolean | never*
 
-*Defined in [Confiction.ts:152](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L152)*
+*Defined in [Confiction.ts:203](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L203)*
 
 Validates the current config values against the schema definition.
 

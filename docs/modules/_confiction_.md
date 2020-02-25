@@ -8,27 +8,32 @@
 
 * [Confiction](../classes/_confiction_.confiction.md)
 
-### Type aliases
+### Object literals
 
-* [ConfigValue](_confiction_.md#configvalue)
-* [UnknownSchema](_confiction_.md#unknownschema)
+* [defaultOptions](_confiction_.md#const-defaultoptions)
 
-## Type aliases
+## Object literals
 
-###  ConfigValue
+### `Const` defaultOptions
 
-Ƭ **ConfigValue**: *unknown*
+### ▪ **defaultOptions**: *object*
 
-*Defined in [Confiction.ts:3](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L3)*
+*Defined in [Confiction.ts:11](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L11)*
 
-___
+###  configHierarchy
 
-###  UnknownSchema
+• **configHierarchy**: *"cookies" | "local"[]* = ['local', 'cookies']
 
-Ƭ **UnknownSchema**: *object*
+*Defined in [Confiction.ts:14](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L14)*
 
-*Defined in [Confiction.ts:5](https://github.com/leomeloxp/confiction/blob/14cb15e/src/Confiction.ts#L5)*
+###  cookiesPrefix
 
-#### Type declaration:
+• **cookiesPrefix**: *string* = "CONFICTION"
 
-* \[ **k**: *string*\]: [ConfigValue](_confiction_.md#configvalue)
+*Defined in [Confiction.ts:12](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L12)*
+
+###  useCookies
+
+• **useCookies**: *true* = true
+
+*Defined in [Confiction.ts:13](https://github.com/leomeloxp/confiction/blob/2fe5908/src/Confiction.ts#L13)*
