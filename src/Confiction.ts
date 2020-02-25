@@ -1,37 +1,33 @@
-import { ConfigValidateOptions, parseEntries, Schema } from './utils';
-
-type ConfigValue = unknown;
-
-type UnknownSchema = { [k: string]: ConfigValue };
+import { BaseConfigSchema, ConfigValidateOptions, parseEntries, SafeConfigSchema, Schema } from './utils';
 
 /**
  * Confiction, browser based configuration manager.
  * @export
  * @class Confiction
  */
-export class Confiction {
+export class Confiction<ConfigSchema extends BaseConfigSchema> {
   /**
    * Map holding the parsed config values.
    * @private
-   * @type {Map<string, ConfigValue>}
+   * @type {Map<keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]>}
    * @memberof Confiction
    */
-  private config: Map<string, ConfigValue> = new Map();
+  private config: Map<keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]> = new Map();
 
   /**
    * Schema definition for the configuration map.
    * @private
-   * @type {Schema}
+   * @type {Schema<ConfigSchema>}
    * @memberof Confiction
    */
-  private schema: Schema<UnknownSchema> = {};
+  private schema: Schema<ConfigSchema>;
 
   /**
-   *Creates an instance of Confiction.
-   * @param {Schema} schema A Schema object used to describe the configuration options.
+   * Creates an instance of Confiction.
+   * @param {Schema<ConfigSchema>} schema A Schema object used to describe the configuration options.
    * @memberof Confiction
    */
-  constructor(schema: Schema<UnknownSchema>) {
+  constructor(schema: Schema<ConfigSchema>) {
     this.schema = schema;
     this.default();
   }
@@ -49,24 +45,25 @@ export class Confiction {
   }
 
   /**
-   * Returns the value for the config stored as the supplied key.
-   * @param {K} key The key of the desired config value.
-   * @returns {(T[K])} The value stored in config for the supplied key.
+   *
+   *
+   * @param {keyof ConfigSchema} key The key of the desired config value.
+   * @returns {ConfigSchema[keyof ConfigSchema]} The value stored in config for the supplied key.
    * @memberof Confiction
    */
-  get<T, K extends keyof T | any = string>(key: K): K extends keyof T ? T[K] : T {
+  get(key: keyof ConfigSchema): ConfigSchema[keyof ConfigSchema] {
     // @todo: figure out a better type for this map.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.config as Map<any, any>).get(key) as K extends keyof T ? T[K] : T;
+    return (this.config as Map<any, any>).get(key);
   }
 
   /**
    * Returns all config entries as a {key: value} formatted object.
-   * @returns {{ [key: string]: ConfigValue }}
+   * @returns {ConfigSchema}
    * @memberof Confiction
    */
-  getProperties(): { [key: string]: ConfigValue } {
-    const properties: { [key: string]: ConfigValue } = {};
+  getProperties(): ConfigSchema {
+    const properties: ConfigSchema = {} as ConfigSchema;
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of this.config.entries()) {
       properties[key] = value;
@@ -88,8 +85,8 @@ export class Confiction {
    * @returns {Schema}
    * @memberof Confiction
    */
-  getSchema<T = UnknownSchema>(): Schema<T> {
-    return this.schema as Schema<T>;
+  getSchema(): Schema<ConfigSchema> {
+    return this.schema;
   }
 
   /**
@@ -98,7 +95,7 @@ export class Confiction {
    * @returns {boolean}
    * @memberof Confiction
    */
-  has(key: string): boolean {
+  has(key: keyof ConfigSchema | string): boolean {
     return this.config.has(key);
   }
 
@@ -107,8 +104,9 @@ export class Confiction {
    * @param {{ [key: string]: ConfigValue }} config
    * @memberof Confiction
    */
-  load(config: { [key: string]: ConfigValue }): void {
-    Object.entries(config).forEach(([key, value]) => {
+  load(config: ConfigSchema): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Object.entries<any>(config).forEach(([key, value]: [keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]]) => {
       this.config.set(key, value);
     });
   }
@@ -118,7 +116,7 @@ export class Confiction {
    * @param {string} key
    * @memberof Confiction
    */
-  reset(key: string): void {
+  reset(key: keyof ConfigSchema): void {
     this.config.set(key, this.schema[key].default);
   }
 
@@ -128,7 +126,7 @@ export class Confiction {
    * @param {ConfigValue} value Value for the config property.
    * @memberof Confiction
    */
-  set(key: string, value: ConfigValue): void {
+  set(key: keyof ConfigSchema, value: ConfigSchema[keyof ConfigSchema]): void {
     this.config.set(key, value);
   }
 
@@ -138,7 +136,7 @@ export class Confiction {
    * @memberof Confiction
    */
   toString(): string {
-    const properties: { [key: string]: ConfigValue } = {};
+    const properties: SafeConfigSchema<ConfigSchema> = {} as SafeConfigSchema<ConfigSchema>;
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of this.config.entries()) {
       properties[key] = this.schema[key].sensitive ? '******' : value;
