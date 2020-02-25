@@ -28,6 +28,12 @@ export interface SchemaEntry<T> {
   format?: string;
 }
 
+export interface ConfictionOptions {
+  cookiesPrefix: string;
+  useCookies: boolean;
+  configHierarchy: ('cookies' | 'local')[];
+}
+
 export type BaseConfigSchema = {
   [k: string]: unknown;
 };
