@@ -1,4 +1,18 @@
-import { BaseConfigSchema, ConfigValidateOptions, parseEntries, SafeConfigSchema, Schema } from './utils';
+import Cookie, { CookieSetOptions } from 'universal-cookie';
+import {
+  BaseConfigSchema,
+  ConfictionOptions,
+  ConfigValidateOptions,
+  parseEntries,
+  SafeConfigSchema,
+  Schema,
+} from './utils';
+
+const defaultOptions: ConfictionOptions = {
+  cookiesPrefix: 'CONFICTION',
+  useCookies: true,
+  configHierarchy: ['local', 'cookies'],
+};
 
 /**
  * Confiction, browser based configuration manager.
@@ -15,6 +29,14 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
   private config: Map<keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]> = new Map();
 
   /**
+   * Options used to control behaviour of the config store.
+   * @private
+   * @type {ConfictionOptions}
+   * @memberof Confiction
+   */
+  private options: ConfictionOptions;
+
+  /**
    * Schema definition for the configuration map.
    * @private
    * @type {Schema<ConfigSchema>}
@@ -23,12 +45,21 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
   private schema: Schema<ConfigSchema>;
 
   /**
+   * Helper tool used to get/set values from browser cookies.
+   * @private
+   * @type {Cookie}
+   * @memberof Confiction
+   */
+  private readonly cookieParser: Cookie = new Cookie();
+
+  /**
    * Creates an instance of Confiction.
    * @param {Schema<ConfigSchema>} schema A Schema object used to describe the configuration options.
    * @memberof Confiction
    */
-  constructor(schema: Schema<ConfigSchema>) {
+  constructor(schema: Schema<ConfigSchema>, options: Partial<ConfictionOptions> = {}) {
     this.schema = schema;
+    this.options = { ...defaultOptions, ...options };
     this.default();
   }
 
@@ -52,9 +83,17 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
    * @memberof Confiction
    */
   get(key: keyof ConfigSchema): ConfigSchema[keyof ConfigSchema] {
-    // @todo: figure out a better type for this map.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.config as Map<any, any>).get(key);
+    const {
+      options: { useCookies, configHierarchy },
+    } = this;
+    if (useCookies && configHierarchy[0] === 'cookies') {
+      const cookieValue = this.getFromCookies(key);
+      if (typeof cookieValue !== 'undefined') {
+        return cookieValue;
+      }
+    }
+
+    return this.config.get(key) as ConfigSchema[keyof ConfigSchema];
   }
 
   /**
@@ -104,7 +143,7 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
    * @param {{ [key: string]: ConfigValue }} config
    * @memberof Confiction
    */
-  load(config: ConfigSchema): void {
+  load(config: Partial<ConfigSchema>): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Object.entries<any>(config).forEach(([key, value]: [keyof ConfigSchema, ConfigSchema[keyof ConfigSchema]]) => {
       this.config.set(key, value);
@@ -128,6 +167,16 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
    */
   set(key: keyof ConfigSchema, value: ConfigSchema[keyof ConfigSchema]): void {
     this.config.set(key, value);
+  }
+
+  /**
+   * Sets a config value to the user's cookies.
+   * @param {keyof ConfigSchema} key
+   * @param {ConfigSchema[keyof ConfigSchema]} value
+   * @memberof Confiction
+   */
+  setToCookie(key: keyof ConfigSchema, value: ConfigSchema[keyof ConfigSchema], options?: CookieSetOptions): void {
+    this.cookieParser.set(`${this.options.cookiesPrefix}_${key}`, value, options);
   }
 
   /**
@@ -166,5 +215,9 @@ export class Confiction<ConfigSchema extends BaseConfigSchema> {
       }
       return false;
     });
+  }
+
+  private getFromCookies(key: keyof ConfigSchema): ConfigSchema[keyof ConfigSchema] | undefined {
+    return this.cookieParser.get<ConfigSchema[keyof ConfigSchema]>(`${this.options.cookiesPrefix}_${key}`);
   }
 }
