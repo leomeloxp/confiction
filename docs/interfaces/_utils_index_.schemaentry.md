@@ -16,8 +16,8 @@
 
 * [default](_utils_index_.schemaentry.md#default)
 * [doc](_utils_index_.schemaentry.md#doc)
+* [format](_utils_index_.schemaentry.md#optional-format)
 * [sensitive](_utils_index_.schemaentry.md#optional-sensitive)
-* [type](_utils_index_.schemaentry.md#optional-type)
 
 ## Properties
 
@@ -25,7 +25,7 @@
 
 • **default**: *T*
 
-*Defined in [utils/index.ts:22](https://github.com/leomeloxp/confiction/blob/14cb15e/src/utils/index.ts#L22)*
+*Defined in [utils/index.ts:26](https://github.com/leomeloxp/confiction/blob/2fe5908/src/utils/index.ts#L26)*
 
 ___
 
@@ -33,7 +33,15 @@ ___
 
 • **doc**: *string*
 
-*Defined in [utils/index.ts:21](https://github.com/leomeloxp/confiction/blob/14cb15e/src/utils/index.ts#L21)*
+*Defined in [utils/index.ts:25](https://github.com/leomeloxp/confiction/blob/2fe5908/src/utils/index.ts#L25)*
+
+___
+
+### `Optional` format
+
+• **format**? : *undefined | string*
+
+*Defined in [utils/index.ts:28](https://github.com/leomeloxp/confiction/blob/2fe5908/src/utils/index.ts#L28)*
 
 ___
 
@@ -41,12 +49,4 @@ ___
 
 • **sensitive**? : *undefined | false | true*
 
-*Defined in [utils/index.ts:23](https://github.com/leomeloxp/confiction/blob/14cb15e/src/utils/index.ts#L23)*
-
-___
-
-### `Optional` type
-
-• **type**? : *undefined | string*
-
-*Defined in [utils/index.ts:24](https://github.com/leomeloxp/confiction/blob/14cb15e/src/utils/index.ts#L24)*
+*Defined in [utils/index.ts:27](https://github.com/leomeloxp/confiction/blob/2fe5908/src/utils/index.ts#L27)*
