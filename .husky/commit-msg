@@ -1,5 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Run commitlint to check the message validity
+# Run commitlint
 npx --no-install commitlint --edit $1
