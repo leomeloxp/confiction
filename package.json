@@ -1,7 +1,7 @@
 {
   "name": "confiction",
   "author": "Leonardo Melo",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "license": "MIT",
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
@@ -49,7 +49,7 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "husky": "^4.2.1",
     "prettier": "^1.19.1",
-    "tsdx": "^0.13.2",
+    "tsdx": "^0.14.1",
     "tslib": "^1.10.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-markdown": "^2.2.16",
