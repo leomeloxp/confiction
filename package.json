@@ -1,7 +1,7 @@
 {
   "name": "confiction",
   "author": "Leonardo Melo",
-  "version": "0.6.1",
+  "version": "0.0.0-development",
   "license": "MIT",
   "module": "dist/confiction.esm.js",
   "main": "dist/index.js",
@@ -35,7 +35,8 @@
     "prepare": "tsdx build",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "postpublish": "pinst --enable",
+    "semantic-release": "semantic-release"
   },
   "peerDependencies": {},
   "dependencies": {
@@ -55,15 +56,12 @@
     "husky": "^5.0.8",
     "pinst": "^2.1.4",
     "prettier": "^1.19.1",
+    "semantic-release": "^17.3.7",
+    "semantic-release-npm-github-publish": "^1.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^1.10.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-markdown": "^2.2.16",
     "typescript": "^3.7.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
   }
 }
