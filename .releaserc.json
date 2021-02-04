@@ -1,0 +1,5 @@
+{
+  "branches": ["main"],
+  "extends": "semantic-release-npm-github-publish",
+  "repositoryUrl": "git@github.com:leomeloxp/confiction.git"
+}
