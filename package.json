@@ -56,7 +56,7 @@
     "husky": "^5.0.8",
     "pinst": "^2.1.4",
     "prettier": "^1.19.1",
-    "semantic-release": "^17.3.7",
+    "semantic-release": "^19.0.3",
     "semantic-release-npm-github-publish": "^1.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^1.10.0",
